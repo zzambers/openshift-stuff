@@ -8,6 +8,7 @@ ln -s /tmp/global-config.properties /deployments/etc/global-config.properties
 # create script which generates actual global-config.properties from original
 # to temp and starts the gateway
 cat > /deployments/bin/run.sh << "EOF"
+#!/bin/bash
 
 function setProperty {
 	local file="$1"
@@ -42,3 +43,5 @@ cd /
 exec /deployments/bin/thermostat-web-gateway.sh
 
 EOF
+
+chmod +x /deployments/bin/run.sh
