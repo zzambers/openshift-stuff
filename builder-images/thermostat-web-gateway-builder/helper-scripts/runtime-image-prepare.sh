@@ -64,7 +64,7 @@ if [ -z "\${gatewayHomeDir}" ] ; then
 fi
 
 # escape string so it does no act as regexp
-function escapeString {
+function escapeStringRegex {
     local string="\${1}"
 
     # escape \\ . * [ ^ \$ characters
@@ -77,23 +77,36 @@ function escapeString {
     | sed 's/\\\$/\\\\\\\$/g'
 }
 
-# same as escapeString but also escape forward slash ( used for sed )
-function escapeStringSed {
+# same as escapeStringRegex but also escape forward slash ( used for sed )
+function escapeStringRegexSed {
     local string="\${1}"
 
     escapeString "\${string}" | sed 's;/;\\\\/;g'
 }
 
+# escape string so it can be used as key/value in properties file
+# https://en.wikipedia.org/wiki/.properties
+function escapeStringProperties {
+    local string="\${1}"
+
+    printf '%s' "\${string}"
+    | sed 's/#/\\\\#/g'
+    | sed 's/!/\\\\!/g'
+    | sed 's/=/\\\\=/g'
+    | sed 's/:/\\\\:/g'
+}
+
 # sets single property in properties file to desired value
+# ( expects .properties file to use: key = value or key=value format )
 function setProperty {
     local file="\${1}"
     local property="\${2}"
     local value="\${3}"
 
-    if cat "\${file}" | grep -q "^[[:space:]]*\$( escapeString "\${property}" )[[:space:]]*=.*\\\$" ; then
-        sed -i "s/^[[:space:]]*\$( escapeStringSed "\${property}" )[[:space:]]*=.*\\\$/\$( escapeStringSed "\${property}=\${value}" )/g" "\${file}"
+    if cat "\${file}" | grep -q "^[[:space:]]*\$( escapeStringRegex "\$( escapeStringProperties "\${property}" )" )[[:space:]]*=.*\\\$" ; then
+        sed -i "s/^[[:space:]]*\$( escapeStringRegexSed "\$( escapeStringProperties "\${property}" )" )[[:space:]]*=.*\\\$/\$( escapeStringRegexSed "\$( escapeStringProperties "\${property}" )=\$( escapeStringProperties "\${value}" )" )/g" "\${file}"
     else
-        printf '%s\\n' "\${property}=\${value}" >> "\${file}"
+        printf '%s\\n' "\$( escapeStringProperties "\${property}" )=\$( escapeStringProperties "\${value}" )" >> "\${file}"
     fi
 }
 
