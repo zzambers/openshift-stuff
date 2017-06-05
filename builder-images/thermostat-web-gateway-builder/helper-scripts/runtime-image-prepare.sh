@@ -85,7 +85,7 @@ function escapeStringRegex {
 function escapeStringRegexSed {
     local string="\${1}"
 
-    escapeString "\${string}" | sed 's;/;\\\\/;g'
+    escapeStringRegex "\${string}" | sed 's;/;\\\\/;g'
 }
 
 # escape string so it can be used as key/value in properties file
