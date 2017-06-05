@@ -96,7 +96,7 @@ function escapeStringProperties {
     | sed 's/:/\\\\:/g'
 }
 
-# sets single property in properties file to desired value
+# sets (or adds) single property in properties file to desired value
 # ( expects .properties file to use: key = value or key=value format )
 function setProperty {
     local file="\${1}"
@@ -106,7 +106,8 @@ function setProperty {
     if cat "\${file}" | grep -q "^[[:space:]]*\$( escapeStringRegex "\$( escapeStringProperties "\${property}" )" )[[:space:]]*=.*\\\$" ; then
         sed -i "s/^[[:space:]]*\$( escapeStringRegexSed "\$( escapeStringProperties "\${property}" )" )[[:space:]]*=.*\\\$/\$( escapeStringRegexSed "\$( escapeStringProperties "\${property}" )=\$( escapeStringProperties "\${value}" )" )/g" "\${file}"
     else
-        printf '%s\\n' "\$( escapeStringProperties "\${property}" )=\$( escapeStringProperties "\${value}" )" >> "\${file}"
+        printf '%s\\n' \\
+        "\$( escapeStringProperties "\${property}" )=\$( escapeStringProperties "\${value}" )" >> "\${file}"
     fi
 }
 
