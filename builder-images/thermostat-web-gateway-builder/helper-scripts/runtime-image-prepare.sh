@@ -53,12 +53,12 @@ if [ -z "\${runtimeConfigDir:-}" ] ; then
     exit 1
 fi
 
-if [ -z "\${backupConfigDir}" ] ; then
+if [ -z "\${backupConfigDir:-}" ] ; then
     echo "ERROR: empty backupConfigDir" 1>&2
     exit 1
 fi
 
-if [ -z "\${gatewayHomeDir}" ] ; then
+if [ -z "\${gatewayHomeDir:-}" ] ; then
     echo "ERROR: empty gatewayHomeDir" 1>&2
     exit 1
 fi
