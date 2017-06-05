@@ -40,7 +40,7 @@ prepareServiceConfigFile "jvm-gc"
 # it is executed at runtime
 # ( escaping is evil here :) )
 cat > /deployments/bin/run.sh << EOF
-#!/bin/bash
+#!/bin/sh
 
 set -eu
 
