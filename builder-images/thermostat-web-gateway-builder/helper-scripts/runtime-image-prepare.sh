@@ -38,10 +38,51 @@ prepareServiceConfigFile "jvm-gc"
 # create script, which generates config files from original
 # ones to the runtimeConfigDir directory and then starts the gateway
 # it is executed at runtime
+# ( escaping is evil here :) )
 cat > /deployments/bin/run.sh << EOF
-#!/bin/sh
+#!/bin/bash
 
 set -eu
+
+runtimeConfigDir="${runtimeConfigDir:-}"
+backupConfigDir="${backupConfigDir:-}"
+gatewayHomeDir="${gatewayHomeDir:-}"
+
+if [ -z "\${runtimeConfigDir:-}" ] ; then
+    echo "ERROR: empty runtimeConfigDir" 1>&2
+    exit 1
+fi
+
+if [ -z "\${backupConfigDir}" ] ; then
+    echo "ERROR: empty backupConfigDir" 1>&2
+    exit 1
+fi
+
+if [ -z "\${gatewayHomeDir}" ] ; then
+    echo "ERROR: empty gatewayHomeDir" 1>&2
+    exit 1
+fi
+
+# escape string so it does no act as regexp
+function escapeString {
+    local string="\${1}"
+
+    # escape \\ . * [ ^ \$ characters
+    printf '%s' "\${string}"
+    | sed 's/\\\\/\\\\\\\\/g'
+    | sed 's/\\./\\\\\\./g'
+    | sed 's/\\*/\\\\\\*/g'
+    | sed 's/\\[/\\\\\\[/g'
+    | sed 's/\\^/\\\\\\^/g'
+    | sed 's/\\\$/\\\\\\\$/g'
+}
+
+# same as escapeString but also escape forward slash ( used for sed )
+function escapeStringSed {
+    local string="\${1}"
+
+    escapeString "\${string}" | sed 's;/;\\\\/;g'
+}
 
 # sets single property in properties file to desired value
 function setProperty {
@@ -49,10 +90,10 @@ function setProperty {
     local property="\${2}"
     local value="\${3}"
 
-    if cat "\${file}" | grep -q "^[[:space:]]*\${property}[[:space:]]*=.*\\\$" ; then
-        sed -i "s/^[[:space:]]*\${property}[[:space:]]*=.*\\\$/\${property}=\${value}/g" "\${file}"
+    if cat "\${file}" | grep -q "^[[:space:]]*\$( escapeString "\${property}" )[[:space:]]*=.*\\\$" ; then
+        sed -i "s/^[[:space:]]*\$( escapeStringSed "\${property}" )[[:space:]]*=.*\\\$/\$( escapeStringSed "\${property}=\${value}" )/g" "\${file}"
     else
-        echo "\${property}=\${value}" >> "\${file}"
+        printf '%s\\n' "\${property}=\${value}" >> "\${file}"
     fi
 }
 
@@ -61,7 +102,7 @@ function setServiceProperty {
     local property="\${2}"
     local value="\${3}"
 
-    setProperty "${runtimeConfigDir}/\${serviceName}/service-config.properties" \
+    setProperty "\${runtimeConfigDir}/\${serviceName}/service-config.properties" \
         "\${property}" "\${value}"
 }
 
@@ -70,21 +111,21 @@ function setServiceProperty {
 function prepareRuntimeServiceConfigFile {
     local serviceName="\${1}"
 
-    mkdir -p "${runtimeConfigDir}/\${serviceName}"
-    cp "${backupConfigDir}/\${serviceName}/service-config.properties" \
-        "${runtimeConfigDir}/\${serviceName}/service-config.properties"
+    mkdir -p "\${runtimeConfigDir}/\${serviceName}"
+    cp "\${backupConfigDir}/\${serviceName}/service-config.properties" \
+        "\${runtimeConfigDir}/\${serviceName}/service-config.properties"
 }
 
 # this function should prepare config files based on env. variables
 # ( supplied from openshift ) prior to starting of thermostat-gateway
 function prepareConfig {
     # remove runtimeConfigDir if exists ( just in case )
-    rm -rf "${runtimeConfigDir}"
-    mkdir -p "${runtimeConfigDir}"
+    rm -rf "\${runtimeConfigDir}"
+    mkdir -p "\${runtimeConfigDir}"
 
     # prepare global config file
-    local globalConfigFile="${runtimeConfigDir}/global-config.properties"
-    cp "${backupConfigDir}/global-config.properties" "\${globalConfigFile}"
+    local globalConfigFile="\${runtimeConfigDir}/global-config.properties"
+    cp "\${backupConfigDir}/global-config.properties" "\${globalConfigFile}"
     # set wildcard address 0.0.0.0 ( bind on all interfaces )"
     setProperty "\${globalConfigFile}" "IP" "0.0.0.0"
     # set port to 30000
@@ -127,14 +168,16 @@ function prepareConfig {
     fi
 }
 
+if
+
 prepareConfig
 
 # set home of thermostat gateway using env. variable
-export THERMOSTAT_GATEWAY_HOME="${gatewayHomeDir}"
+export THERMOSTAT_GATEWAY_HOME="\${gatewayHomeDir}"
 
 # start thermostat-gateway itself
 cd /
-exec "${gatewayHomeDir}/bin/thermostat-web-gateway.sh"
+exec "\${gatewayHomeDir}/bin/thermostat-web-gateway.sh"
 
 EOF
 
