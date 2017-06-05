@@ -20,16 +20,20 @@ runtimeConfigDir="/tmp/thermostat-web-gateway-config"
 mkdir -p "${backupConfigDir}"
 
 # setup global-config.properties such as it can be modified at runtime
-mv "${configDir}/global-config.properties" "${backupConfigDir}/global-config.properties"
-ln -s "${runtimeConfigDir}/global-config.properties" "${configDir}/global-config.properties"
+mv "${configDir}/global-config.properties" \
+    "${backupConfigDir}/global-config.properties"
+ln -s "${runtimeConfigDir}/global-config.properties" \
+    "${configDir}/global-config.properties"
 
 # do the same for service config files
 function prepareServiceConfigFile {
     local serviceName="${1}"
 
     mkdir -p "${backupConfigDir}/${serviceName}"
-    mv "${configDir}/${serviceName}/service-config.properties" "${backupConfigDir}/${serviceName}/service-config.properties"
-    ln -s "${runtimeConfigDir}/${serviceName}/service-config.properties" "${configDir}/${serviceName}/service-config.properties"
+    mv "${configDir}/${serviceName}/service-config.properties" \
+        "${backupConfigDir}/${serviceName}/service-config.properties"
+    ln -s "${runtimeConfigDir}/${serviceName}/service-config.properties" \
+        "${configDir}/${serviceName}/service-config.properties"
 }
 
 prepareServiceConfigFile "jvm-memory"
@@ -184,8 +188,6 @@ function prepareConfig {
         exit 1
     fi
 }
-
-if
 
 prepareConfig
 
