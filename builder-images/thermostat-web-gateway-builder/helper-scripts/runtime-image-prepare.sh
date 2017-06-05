@@ -63,17 +63,17 @@ if [ -z "\${gatewayHomeDir}" ] ; then
     exit 1
 fi
 
-# escape string so it does no act as regexp
+# escape string so that characters with special meaning in regexp are escaped
 function escapeStringRegex {
     local string="\${1}"
 
     # escape \\ . * [ ^ \$ characters
-    printf '%s' "\${string}"
-    | sed 's/\\\\/\\\\\\\\/g'
-    | sed 's/\\./\\\\\\./g'
-    | sed 's/\\*/\\\\\\*/g'
-    | sed 's/\\[/\\\\\\[/g'
-    | sed 's/\\^/\\\\\\^/g'
+    printf '%s' "\${string}" \\
+    | sed 's/\\\\/\\\\\\\\/g' \\
+    | sed 's/\\./\\\\\\./g' \\
+    | sed 's/\\*/\\\\\\*/g' \\
+    | sed 's/\\[/\\\\\\[/g' \\
+    | sed 's/\\^/\\\\\\^/g' \\
     | sed 's/\\\$/\\\\\\\$/g'
 }
 
@@ -89,10 +89,10 @@ function escapeStringRegexSed {
 function escapeStringProperties {
     local string="\${1}"
 
-    printf '%s' "\${string}"
-    | sed 's/#/\\\\#/g'
-    | sed 's/!/\\\\!/g'
-    | sed 's/=/\\\\=/g'
+    printf '%s' "\${string}" \\
+    | sed 's/#/\\\\#/g' \\
+    | sed 's/!/\\\\!/g' \\
+    | sed 's/=/\\\\=/g' \\
     | sed 's/:/\\\\:/g'
 }
 
@@ -115,7 +115,7 @@ function setServiceProperty {
     local property="\${2}"
     local value="\${3}"
 
-    setProperty "\${runtimeConfigDir}/\${serviceName}/service-config.properties" \
+    setProperty "\${runtimeConfigDir}/\${serviceName}/service-config.properties" \\
         "\${property}" "\${value}"
 }
 
@@ -125,7 +125,7 @@ function prepareRuntimeServiceConfigFile {
     local serviceName="\${1}"
 
     mkdir -p "\${runtimeConfigDir}/\${serviceName}"
-    cp "\${backupConfigDir}/\${serviceName}/service-config.properties" \
+    cp "\${backupConfigDir}/\${serviceName}/service-config.properties" \\
         "\${runtimeConfigDir}/\${serviceName}/service-config.properties"
 }
 
