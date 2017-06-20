@@ -5,7 +5,7 @@
 # This test image is based on:
 # https://github.com/openshift-s2i/s2i-wildfly folder 10.1
 
-FROM icedtea/thermostat-agent-centos7
+FROM thermostat-ng-agent-centos7
 
 EXPOSE 8080
 
