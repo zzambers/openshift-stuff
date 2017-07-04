@@ -36,9 +36,9 @@ function prepareServiceConfigFile {
         "${configDir}/${serviceName}/service-config.properties"
 }
 
-prepareServiceConfigFile "jvm-memory"
-prepareServiceConfigFile "jvm-gc"
-prepareServiceConfigFile "jvms"
+#prepareServiceConfigFile "jvm-memory"
+#prepareServiceConfigFile "jvm-gc"
+#prepareServiceConfigFile "jvms"
 
 # create script, which generates config files from original
 # ones to the runtimeConfigDir directory and then starts the gateway
@@ -154,41 +154,45 @@ function prepareConfig {
     setProperty "\${globalConfigFile}" "PORT" "30000"
 
     # prepare service config files
-    prepareRuntimeServiceConfigFile "jvm-memory"
-    prepareRuntimeServiceConfigFile "jvm-gc"
-    prepareRuntimeServiceConfigFile "jvms"
+#    prepareRuntimeServiceConfigFile "jvm-memory"
+#    prepareRuntimeServiceConfigFile "jvm-gc"
+#    prepareRuntimeServiceConfigFile "jvms"
 
     if [ -n "\${MONGO_URL:-}" ] ; then
-        setServiceProperty "jvm-memory" "MONGO_URL" "\${MONGO_URL}"
-        setServiceProperty "jvm-gc" "MONGO_URL" "\${MONGO_URL}"
-        setServiceProperty "jvms" "MONGO_URL" "\${MONGO_URL}"
+        setProperty "\${globalConfigFile}" "MONGO_URL" "\${MONGO_URL}"
+#        setServiceProperty "jvm-memory" "MONGO_URL" "\${MONGO_URL}"
+#        setServiceProperty "jvm-gc" "MONGO_URL" "\${MONGO_URL}"
+#        setServiceProperty "jvms" "MONGO_URL" "\${MONGO_URL}"
     else
         echo "ERROR: missing MONGO_URL" 1>&2
         exit 1
     fi
 
     if [ -n "\${MONGO_DB:-}" ] ; then
-        setServiceProperty "jvm-memory" "MONGO_DB" "\${MONGO_DB}"
-        setServiceProperty "jvm-gc" "MONGO_DB" "\${MONGO_DB}"
-        setServiceProperty "jvms" "MONGO_DB" "\${MONGO_DB}"
+        setProperty "\${globalConfigFile}" "MONGO_DB" "\${MONGO_DB}"
+#        setServiceProperty "jvm-memory" "MONGO_DB" "\${MONGO_DB}"
+#        setServiceProperty "jvm-gc" "MONGO_DB" "\${MONGO_DB}"
+#        setServiceProperty "jvms" "MONGO_DB" "\${MONGO_DB}"
     else
         echo "ERROR: missing MONGO_DB" 1>&2
         exit 1
     fi
 
     if [ -n "\${MONGO_USERNAME:-}" ] ; then
-        setServiceProperty "jvm-memory" "MONGO_USERNAME" "\${MONGO_USERNAME}"
-        setServiceProperty "jvm-gc" "MONGO_USERNAME" "\${MONGO_USERNAME}"
-        setServiceProperty "jvms" "MONGO_USERNAME" "\${MONGO_USERNAME}"
+        setProperty "\${globalConfigFile}" "MONGO_USERNAME" "\${MONGO_USERNAME}"
+#        setServiceProperty "jvm-memory" "MONGO_USERNAME" "\${MONGO_USERNAME}"
+#        setServiceProperty "jvm-gc" "MONGO_USERNAME" "\${MONGO_USERNAME}"
+#        setServiceProperty "jvms" "MONGO_USERNAME" "\${MONGO_USERNAME}"
     else
         echo "ERROR: missing MONGO_USERNAME" 1>&2
         exit 1
     fi
 
     if [ -n "\${MONGO_PASSWORD:-}" ] ; then
-        setServiceProperty "jvm-memory" "MONGO_PASSWORD" "\${MONGO_PASSWORD}"
-        setServiceProperty "jvm-gc" "MONGO_PASSWORD" "\${MONGO_PASSWORD}"
-        setServiceProperty "jvms" "MONGO_PASSWORD" "\${MONGO_PASSWORD}"
+        setProperty "\${globalConfigFile}" "MONGO_PASSWORD" "\${MONGO_PASSWORD}"
+#        setServiceProperty "jvm-memory" "MONGO_PASSWORD" "\${MONGO_PASSWORD}"
+#        setServiceProperty "jvm-gc" "MONGO_PASSWORD" "\${MONGO_PASSWORD}"
+#        setServiceProperty "jvms" "MONGO_PASSWORD" "\${MONGO_PASSWORD}"
     else
         echo "ERROR: missing MONGO_PASSWORD" 1>&2
         exit 1
