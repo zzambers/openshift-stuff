@@ -27,7 +27,8 @@ RUN INSTALL_PKGS="tar unzip bc which lsof java-1.8.0-openjdk java-1.8.0-openjdk-
     yum clean all -y && \
     mkdir -p /wildfly && \
     (curl -v https://download.jboss.org/wildfly/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSION.tar.gz | tar -zx --strip-components=1 -C /wildfly) && \
-    mkdir -p /opt/s2i/destination
+    mkdir -p /opt/s2i/destination \
+    cp /opt/app-root/thermostat/etc/examples/ssl.properties.example /opt/app-root/thermostat/etc/ssl.properties
 
 # Add s2i wildfly customizations
 ADD ./contrib/wfmodules/ /wildfly/modules/
