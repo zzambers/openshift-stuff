@@ -657,10 +657,10 @@ objects:
 ## PARAMETERS ##
 ################
 parameters:
-# host/IP on which openshift resides as seen from client (browser),
+# URL on which thermostat gateway resides as seen from client (browser),
 # used in web-client's buildconfig (see thermostat-client-artifacts-bc higher)
 # for example:
 # https://thermostat-gateway-client-route-thermostat-test.192.168.1.16.xip.io
 - name: "GATEWAY_URL"
-  description: "hostname (or IP address) of running openshift (used for web client)"
+  description: "URL of thermostat gateway (used for in client build config)"
   required: true
