@@ -649,7 +649,7 @@ objects:
       kind: "Service"
       name: "thermostat-wildfly-testapp-svc"
     port:
-      targetPort: "8080"
+      targetPort: "8080-tcp"
 ################
 ## PARAMETERS ##
 ################
